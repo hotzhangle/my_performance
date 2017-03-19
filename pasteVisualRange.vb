@@ -79,6 +79,7 @@ rechoice:
     hiddenColumnCounter = 0
     
     Set shapedRange = distRange(Cells(StartRow, startColumn), Cells(rowOffset, columnOffset))
+    Application.ScreenUpdating = False
     
 nextRow:
     Do While distVisualRowCounter < sourceVisualRowCounter
@@ -119,6 +120,7 @@ nextColumn:
         End If
     Loop
     '##################################把字典中的值转存到目标区域中########################
+    Application.ScreenUpdating = True
     
 End Sub
 
