@@ -79,6 +79,7 @@ elif [[ $# -ge 2 -a $# -le 3 ]]; then # -le 表示小于等于，-ge表示大于
 	myvar=2 #为变量赋值的，注意等号前后均不能有空格
 	while [[ $myvar -le $# ]]; do #注意while循环的用法
 		echo $`expr $myvar`  #利用expr 计算出$myvar对应的变量值，再用echo $n类似的写法输出命令行的第n个变量
+		let myvar++
 	done
 elif [[ $# -lt 0  -o $# -gt 3 ]]; then
 	echo "$0 has support too many arguments on parameters:$@"  # $@可以输出所有命令行参数，在没有被双引号包围的前提下，等同于$*
