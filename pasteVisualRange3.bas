@@ -124,3 +124,7 @@ Public Function returnDistCell(ByRef cell As Range, isRowIndexChanged As Boolean
     
     Debug.Print "下一个目标地址为：" & returnDistCell.Address(1, 1, External:=True)
 End Function
+
+Public Function getSleepTime(ByVal recordCount As Long) As Integer
+     getSleepTime = Application.WorksheetFunction.Ceiling(recordCount / 50000, 1)
+End Function
