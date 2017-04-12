@@ -7,15 +7,13 @@ function wpwd(){
   else
     for arg  in $@
       do
-        pwd | sed 's#\/#\\#g' | sed -e 's@^@\\\\'$ip'@g' -e 's@$@\\'$arg'@g'
+        if [ -f $arg ];then
+          pwd | sed 's#\/#\\#g' | sed -e 's@^@\\\\'$ip'@g' -e 's@$@\\'$arg'@g' -e 's#\/#\\#g'
+        elif [ -d $arg ];then
+          pwd | sed 's#\/#\\#g' | sed -e 's@^@\\\\'$ip'@g' -e 's@$@\\'$arg'@g'
+        else
+          continue
+        fi        
       done
-  fi
-  #以下的文件判断关系是用于加在路径后面，防止出现异常的，这个版本还需要完善
-  if [ -f $arg ];then
-    echo $arg
-  elif [ -d $arg ];then
-    echo $arg
-  else
-    continue
   fi
 }
