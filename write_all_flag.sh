@@ -21,7 +21,7 @@ adb shell " mkdir -p /persist/flag"
 for arg in "${factory_flag_files[@]}";
         do
                 txtFile=`echo $arg | grep txt`
-                length=`expr length "$txtFile"`
+                length=`expr length "$txtFile"` #主要为了说明字符串长度的算法
                 #echo $length
                 if [ $length -gt 0 ];then
                         if [ $arg = "psn.txt" ];then
