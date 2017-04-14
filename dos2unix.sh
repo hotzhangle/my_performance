@@ -30,9 +30,11 @@ function wpwd(){
     for arg  in $@
       do
         if [ -f $arg ];then
-          pwd | sed 's#\/#\\#g' | sed -e 's@^@\\\\'$ip'@g' -e 's@$@\\'$arg'@g' -e 's#\/#\\#g'
+          #pwd | sed 's#\/#\\#g' | sed -e 's@^@\\\\'$ip'@g' -e 's@$@\\'$arg'@g' -e 's#\/#\\#g'
+          pwd | sed 's#\/#\\#g' | sed -e 's@^@'$ip'@g' -e 's@$@\\'$arg'@g' -e 's#\/#\\#g' -e 's#^\\##' -e 's#\(^[a-z]\)#\u&:#'
         elif [ -d $arg ];then
-          pwd | sed 's#\/#\\#g' | sed -e 's@^@\\\\'$ip'@g' -e 's@$@\\'$arg'@g'
+          #pwd | sed 's#\/#\\#g' | sed -e 's@^@\\\\'$ip'@g' -e 's@$@\\'$arg'@g'
+	  pwd | sed 's#\/#\\#g' | sed -e 's@^@'$ip'@g' -e 's@$@\\'$arg'@g' -e 's#^\\##' -e 's#\(^[a-z]\)#\u&:#' -e 's#\/#\\#g'
         else
           continue
         fi        
