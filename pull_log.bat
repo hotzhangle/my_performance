@@ -42,5 +42,6 @@ powershell ..\size.ps1 .\mtklog\mobilelog\  >> ./FileSize.txt
 adb kill-server
 cd ..
 rem ==========压缩创建的目录，压缩完成会删除源文件==========
+rem 将winrar安装目录下的rar.exe,unrar.exe复制到windows目录下就可以使用rar命令了
 rar a %T%.rar -m5 -s -r -df %T%
 exit 0
