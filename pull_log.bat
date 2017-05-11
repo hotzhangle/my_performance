@@ -27,11 +27,20 @@ for /f "skip=1 tokens=1" %%i in (E:\study\fileList.txt) do (
 	echo adb pull %%i ./mtklog
 )
 pause
-adb pull /data/anr ./anr
+rem ==========抓取指定log==========
+adb pull /sdcard/hq_logcat/  ./hq_logcat/
+rem 主供的ITO数据
+adb pull /sdcard/Rawdata/ ./CtpLog
+rem 二供的ITO数据
+adb pull sdcard/Android/data/com.focaltech.ft_terminal_test/files/ ./CtpLog
+adb pull /data/anr ./hq_logcat/anr
 adb pull /sdcard/Pictures/Screenshots/  ./ScreenShots
 adb shell "du sdcard/mtklog/mobilelog"  >> ./FileSize.txt
 @rem size.ps1需要放在和这个脚本同级的目录下，size.ps1需要指定一个路径参数，本例中用.\mtklog\mobilelog来指代路径
 adb shell "du sdcard/mtklog/mobilelog"  >> ./FileSize.txt
 powershell ..\size.ps1 .\mtklog\mobilelog\  >> ./FileSize.txt
 adb kill-server
+cd ..
+rem ==========压缩创建的目录，压缩完成会删除源文件==========
+rar a %T%.rar -m5 -s -r -df %T%
 exit 0
