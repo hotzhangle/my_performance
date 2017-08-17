@@ -21,15 +21,12 @@ call :getCeilManufacturer  rem 我也不知道，这个嵌套为什么总是写�
 call :collectLogFile
 rem ==========停止adb server==========
 adb kill-server
-rem ==========返回上级目录============
+rem ==========返回上级目录，才能回到log的根目录位置============
 cd ..
-rem ==========压缩创建的目录，压缩完成会删除源文件==========
-if exist "C:\Windows\System32\Rar.exe" (
-	rar a "%T%.rar" -m5 -s -r -df "%T%"
-) else (
-	echo "Because it doesn't exist winrar and will not compress!"
-	pause
-)
+rem ==========压缩log目录============
+call :compressLog
+rem ==========执行log分析脚本============
+::start /b powershell.exe -file "D:\zhangle\logs\LogTools\AutoAnalysisLog.ps1" -Directory "%curScriptPath%2017-08-16-V7081404533-插卡后状态栏显示运营商信息附了截图-103005"
 rem ==========退出CMD程序=============
 goto exit
 :exit
@@ -57,6 +54,7 @@ GOTO :EOF
 GOTO :EOF
 
 :setLogDirEnv
+	set curScriptPath=%~dp0
 	echo logName is:%T%
 	adb wait-for-device shell getprop ro.build.fingerprint
 	pause
@@ -98,6 +96,7 @@ GOTO :EOF
 	if "QUALCOMM" == "%Manufacturer%" (
 		adb pull -p  /sdcard/logs/  ./logs/
 		adb pull -p  /sdcard/hq_logcat/  ./hq_logcat/
+		adb shell dmesg > dmesg.log
 		rem adb pull -p  /sdcard/diag_logs/  ./diag_logs/
 	)
 	
@@ -145,3 +144,13 @@ GOTO :EOF
 	)
 GOTO :EOF
 ::不能嵌套的进行call命令
+
+:compressLog
+rem ==========压缩创建的目录，压缩完成会删除源文件==========
+if exist "C:\Windows\System32\Rar.exe" (
+	rar a "%T%.rar" -m5 -s -r -df "%T%"
+) else (
+	echo "Because it doesn't exist winrar and will not compress!"
+	pause
+)
+GOTO :EOF
