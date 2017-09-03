@@ -1,15 +1,15 @@
-cd  "E:\android_log\2017-08-17-V7081504726-÷ÿ¡¶¥´∏–∆˜Œﬁ∑®≤‚ ‘pass-134113\hq_logcat"
+cd  "E:\android_log\7-13_732C_google app has stop\HAOM4XL6\mtklog\mobilelog"
 
 #=============================================================================================================
 $script:LOG_NAME="Test"
-$script:Log_Type_Array = @("*system*")#, "*main*")#,"*kernel*")
+$script:Log_Type_Array = @("*events*")#, "*main*")#,"*kernel*")
 write-host "LogType="$Log_Type_Array
 
-$script:log_level="[VDIWEFS]"
-#$script:log_level="[WE]"
+#$script:log_level="[VDIWEFS]"
+$script:log_level="[IWE]"
 
 $script:Exclude_Word=
-#$script:Exclude_Word="PackageManager|PackageParser|SystemServiceManager|SystemServer|UsbAlsaManager|ActivityManager|WindowManager"
+#$script:Exclude_Word="TestGPS|bluetooth|wifi|mic|sensor|FactoryItemManager"
 write-host "Exclude_Word = "$script:Exclude_Word
 if([String]::IsNullOrEmpty($script:Exclude_Word)){
     Write-Host "The Exclude_Word is null"
@@ -18,19 +18,24 @@ if([String]::IsNullOrEmpty($script:Exclude_Word)){
     [bool]$script:enable_Exclude= $true
 }
 
-$script:TAG="SystemServer"
+$script:TAG="am_create_activity"
 #$script:TAG="\w+"
 
-$script:search_pid="1485"
-#$script:search_pid="\d{1,}"
+#$script:search_pid="1485"
+$script:search_pid="\d{1,}"
 
 $script:relation_operator="-ge"
-#$script:relation_operator=$null
+$script:relation_operator=$null
 $date_str_pattern="(\d\d-\d\d)"
-$time_str_pattern="(\d\d:\d\d:\d\d.\d{1,3})"
+$time_str_pattern="(\d\d:\d\d:\d\d.\d{1,6})"
 $custom_appointed_time="01-01 00:15:12.650"
 
-$script:Search_Pattern=$date_str_pattern + " " + $time_str_pattern + " "+$log_level+"/\b"+$TAG+"\b\(\s+"+$search_pid+"\):"
+$script:Search_Pattern=$date_str_pattern + "\s+" + $time_str_pattern + "\s+"+$log_level+"/\b"+$TAG+"\b\(\s+"+$search_pid+"\):"
+if($false){
+    $Search_Pattern_Mtklog=$date_str_pattern + "\s+" + $time_str_pattern + "(\s+\d+){2}" + "\s+"+$log_level + "\s+\b"+$TAG+"\b:" + "\s+(.*)"
+    $script:Search_Pattern = $Search_Pattern_Mtklog
+}
+
 write-host "Search_Pattern = "$Search_Pattern
 write-host "enable_Exclude = "$script:enable_Exclude
 $Seperator_line = "=" * 30
@@ -93,7 +98,7 @@ function ExcludeWordOrNot([Collections.ArrayList]$arrayParam){
     $index = 0
     $arrayParam | ForEach-Object {
         #$index
-        if ($index-- -eq 0){write-host "enable_Exclude_Toggle = "$enable_Exclude}
+        #if ($index-- -eq 0){write-host "enable_Exclude_Toggle = "$enable_Exclude}
         $_.name
         "`r`n"+ $Seperator_line*2 + $_.name +$Seperator_line*2 + "`r`n" >> $script:fileName
         $private:match_log=Select-String -Path $_.fullname -Pattern $script:Search_Pattern
@@ -118,8 +123,9 @@ $start = Get-Date
 ExcludeWordOrNot $array
 $end = Get-Date
 Write-Host -ForegroundColor Red ('Total Runtime: ' + ($end - $start).TotalSeconds)
-if(Test-Path $fileName){start $fileName}
-#º–ÀΩªı
+#if(Test-Path $fileName){start $fileName}
+if(Test-Path $fileName){Get-Content $fileName | Out-GridView}
+#Â§πÁßÅË¥ß
 if (test-path D:\zhangle\zhangle\shareClipboard.pl){
     Remove-Item D:\zhangle\zhangle\shareClipboard.pl
     if (!(test-path D:\zhangle\zhangle\)){mkdir D:\zhangle\zhangle\}
