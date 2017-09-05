@@ -120,7 +120,13 @@ function ExcludeWordOrNot([Collections.ArrayList]$arrayParam){
 
 $array=Get-ChildItem -Recurse -Include  $Log_Type_Array | Sort-Object -Unique
 $start = Get-Date
-ExcludeWordOrNot $array
+if($array){
+    ExcludeWordOrNot $array
+}else{
+    Write-Host -ForegroundColor Red ('File array is null and will exit')
+    exit -1
+}
+
 $end = Get-Date
 Write-Host -ForegroundColor Red ('Total Runtime: ' + ($end - $start).TotalSeconds)
 #if(Test-Path $fileName){start $fileName}
