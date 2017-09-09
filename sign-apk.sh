@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
-needed_file(signapk.jar platform.x509.pem platform.pk8)
+needed_file=(signapk.jar platform.x509.pem platform.pk8)
 jarPath=out/host/linux-x86/framework
 securityFilePath=build/target/product/security
-needed_file_count=${#needed_file[#]}
+#for asus path name
+securityFilePath_asus=custom/target/product/security/
+#arr_length=${#arr_number[*]}或${#arr_number[@]}
+needed_file_count=${#needed_file[*]}
 
 
 echo "###################################"
@@ -23,11 +26,11 @@ function getNewPath(){
 		if [[ ! -e $2/$1 ]]; then #一般而言，[[]]这种写法的算法最快，time命令可以看程序的执行时间
 			showExitMsg $1
 		elif [[ -d out/ ]]; then #判断目录是否存在的运算符，还有其他运算符，需要查, -f 文件，-e文件和目录 -s文件存在并且文件size大于0
-			#echo "存在out目录"
+			echo "存在out目录"
 		else
 			needed_file[$3] = $2/$1 #为数组某一元素赋值,字符串拼接直接拼接即可，引用字符串变量为了防止出错，尽量采用${}形式
 		fi
-	fi	
+	fi
 }
 
 function checkNeededSignFiles(){
@@ -48,8 +51,10 @@ function checkNeededSignFiles(){
 
 function signAllUnsignedApkCurrentDir(){
 	for file in `find . -maxdepth 1 -type f -name "*.apk" | grep -iv signed`; do #for循环的第二种写法
-		aname=`echo $file | awk -F'[.\/]' '{print $(NF-1)}' 2 >/dev/null`  #2>/dev/null 不显示错误信息 awk命令的简单用法
-		sname=`echo $file | sed -e 's/#^.*\/##' -e 's@\(.*\)\.apk@\1@' ` #sed命令的简单用法，正则表达式的定界符
+		echo file=${file}
+		aname=`echo $file | awk -F'[.\/]' '{print $(NF-1)}' 2>/dev/null`  #2>/dev/null 不显示错误信息 awk命令的简单用法
+		sname=`echo $file | sed -e 's#^.*\/##' -e 's@\(.*\)\.apk@\1@'` #sed命令的简单用法，正则表达式的定界符
+		echo aname=${aname} sname=${sname}
 		java -jar ${needed_file[0]} ${needed_file[1]} ${needed_file[2]} ${aname}.apk ${aname}_signed.apk
 		if [[ $? -eq 0 ]]; then #数字的比较只能用 -eq 类的算法  $?表示上一条命令的执行结果
 			echo "${sname}.apk--->${sname}_signed.apk"
@@ -59,29 +64,25 @@ function signAllUnsignedApkCurrentDir(){
 	done
 }
 
-if [[ x = $1x ]]; then #判断命令行是否有传递参数 $1是指第一个参数，依次类推
-	allocateName=$1
-else
-	allocateName=""
-fi
 
-if [[ -e "test_signed.apk" ]]; then #说明until循环的用法
+
+if [[ -e "*_signed_*.apk" ]]; then #说明until循环的用法
 	index=1
 	until [[ ! -e "*_signed_$index.apk" ]]; do
 		let index+=1 #变量自增的第一种用法 index=$(($index+1)) index=$[$index+1]  index=`expr $index + 1`  let index++
 	done
 fi
 
-if [ $# -gt 0 -a $# -lt 2 ]]; then # $#获得当前脚本执行获得的参数---大于0小于2，即一个。也可以写成if [[ $# -gt 0  &&  $# -lt 2 ]].括号的写法有差别
-	#[[]] 中可以使用通配符,不需要引号
+if [ $# -gt 0 -a $# -lt 2 ]; then # $#获得当前脚本执行获得的参数---大于0小于2，即一个。也可以写成if [[ $# -gt 0  &&  $# -lt 2 ]].括号的写法有差别
+	#[[]] 中可以使用通配符,不需要引号,当使用-a/-o逻辑操作符号时，需要使用单括号
 	apkName=$allocateName.apk
-elif [[ $# -ge 2 -a $# -le 3 ]]; then # -le 表示小于等于，-ge表示大于等于，此处表示2或者3，e表示equals
+elif [ $# -ge 2 -a $# -le 3 ]; then # -le 表示小于等于，-ge表示大于等于，此处表示2或者3，e表示equals
 	myvar=2 #为变量赋值的，注意等号前后均不能有空格
 	while [[ $myvar -le $# ]]; do #注意while循环的用法
 		echo $`expr $myvar`  #利用expr 计算出$myvar对应的变量值，再用echo $n类似的写法输出命令行的第n个变量
 		let myvar++
 	done
-elif [[ $# -lt 0  -o $# -gt 3 ]]; then
+elif [ $# -lt 0  -o $# -gt 3 ]; then
 	echo "$0 has support too many arguments on parameters:$@"  # $@可以输出所有命令行参数，在没有被双引号包围的前提下，等同于$*
 fi
 checkNeededSignFiles
