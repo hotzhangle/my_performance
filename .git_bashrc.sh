@@ -5,12 +5,13 @@ function wcd(){
 		return 1
 	else
 		local path=`echo $1 | sed -e 's#\\\#\/#g' -e 's#^[A-Z]#\/\l&#' -e 's#:##'g`
+		 #local path=`echo $1 | tr '\' '/' | sed -e 's#^[A-Z]:#\/media\/code#'`
 		if [ -d $path ];then
 			cd $path
 		elif [ -f $path ];then
 			path=`echo $path | sed -e 's#\(.*\/\)\(.*\)#\1#'`
-			echo $path
-			wcd $path
+			#echo $path
+			cd $path
 		else
 			echo -e "\e[1;31mWarning:arguments error.\e[0m"
 			return 2
