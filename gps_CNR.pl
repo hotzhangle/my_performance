@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-
+#https://wenku.baidu.com/view/12aa3de483d049649a665818.html #信号解读
 use Cwd;
 use 5.10.0;
 use warnings;
