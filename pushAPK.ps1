@@ -1,3 +1,4 @@
+adb kill-server ;adb start-server
 adb wait-for-device root
 adb wait-for-device remount | Out-Null
 
@@ -15,9 +16,11 @@ out\target\product\aus6739_66_n1
 
 Set-Location -Path $projectHomePath$deviceTargetRelativeHome
 
+##################################################################################
 $generationPath=@"
 out/target/product/aus6739_66_n1/system/priv-app/SystemUI/SystemUI.apk
 "@
+##################################################################################
 
 <#$generationRootName=$generationPath.Replace($deviceTargetRelativeHome.Replace('\','/'),"")
 $generationRootName=$generationRootName.Substring(0,$generationRootName.LastIndexOf('/')+1)
@@ -50,4 +53,6 @@ Get-ChildItem -Path $modulePath -Recurse | foreach-Object{
         sleep -Milliseconds 500
     }
 }
+
 adb shell "pgrep system_server | xargs kill"
+adb kill-server
