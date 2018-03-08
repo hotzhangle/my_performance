@@ -46,7 +46,8 @@ Get-ChildItem -Path $modulePath -Recurse | foreach-Object{
         $SourcePaht="."+$TargetPath.Replace('/','\')
         #"`$TargetPath" + "= $TargetPath" 
         #"`$SourcePaht" + "= $SourcePaht" 
-        adb push $SourcePaht $TargetPath
+        adb wait-for-device push $SourcePaht $TargetPath
         sleep -Milliseconds 500
     }
 }
+adb shell "pgrep system_server | xargs kill"
