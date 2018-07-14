@@ -1,12 +1,13 @@
-cd  "E:\android_log\7-13_732C_google app has stop\HAOM4XL6\mtklog\mobilelog"
-
+$CurrentPath = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$CurrentPath = Get-Location
+Set-Location $CurrentPath
 #=============================================================================================================
-$script:LOG_NAME="Test"
-$script:Log_Type_Array = @("*events*")#, "*main*")#,"*kernel*")
+$script:LOG_NAME="MMI_GPS"
+$script:Log_Type_Array = @("*main*")#, "*event*")#,"*kernel*")
 write-host "LogType="$Log_Type_Array
 
-#$script:log_level="[VDIWEFS]"
-$script:log_level="[IWE]"
+$script:log_level="[VDIWEFS]"
+#$script:log_level="[IWE]"
 
 $script:Exclude_Word=
 #$script:Exclude_Word="TestGPS|bluetooth|wifi|mic|sensor|FactoryItemManager"
@@ -18,7 +19,7 @@ if([String]::IsNullOrEmpty($script:Exclude_Word)){
     [bool]$script:enable_Exclude= $true
 }
 
-$script:TAG="am_create_activity"
+$script:TAG="MMI_"
 #$script:TAG="\w+"
 
 #$script:search_pid="1485"
@@ -30,9 +31,9 @@ $date_str_pattern="(\d\d-\d\d)"
 $time_str_pattern="(\d\d:\d\d:\d\d.\d{1,6})"
 $custom_appointed_time="01-01 00:15:12.650"
 
-$script:Search_Pattern=$date_str_pattern + "\s+" + $time_str_pattern + "\s+"+$log_level+"/\b"+$TAG+"\b\(\s+"+$search_pid+"\):"
-if($false){
-    $Search_Pattern_Mtklog=$date_str_pattern + "\s+" + $time_str_pattern + "(\s+\d+){2}" + "\s+"+$log_level + "\s+\b"+$TAG+"\b:" + "\s+(.*)"
+$script:Search_Pattern=$date_str_pattern + "\s+" + $time_str_pattern + "\s+"+$log_level+"/.*"+$TAG+".*\(\s+"+$search_pid+"\):"
+if($true){
+    $Search_Pattern_Mtklog=$date_str_pattern + "\s+" + $time_str_pattern + "(\s+\d+){2}" + "\s+"+$log_level + "\s+.*"+$TAG+".*\s*:" + "\s+(.*)"
     $script:Search_Pattern = $Search_Pattern_Mtklog
 }
 
@@ -118,7 +119,7 @@ function ExcludeWordOrNot([Collections.ArrayList]$arrayParam){
     }
 }
 
-$array=Get-ChildItem -Recurse -Include  $Log_Type_Array | Sort-Object -Unique
+$array=Get-ChildItem -Recurse -Include  $Log_Type_Array | Where-Object {Test-Path -PathType Leaf -Path $_.FullName} |Sort-Object -Unique 
 $start = Get-Date
 if($array){
     ExcludeWordOrNot $array
