@@ -85,9 +85,11 @@ function keywordsFilter([string]$keywords=$keywordsPattern,$fileArray){
 
 function compressLog(){
     cd ..
+    $curDir = Get-Location
     if (Test-Path "C:\Windows\System32\Rar.exe"){
         #rar a "${Directory}.rar" -m5 -s -r -df "${Directory}"
         rar a "${Directory}.rar" -m5 -s -r "${Directory}"
+        cd $curDir
     }else{
         echo "Because it doesn't exist winrar and will not compress!"
         Write-Host 'Press Any Key!' -NoNewline
